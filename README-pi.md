@@ -23,3 +23,18 @@ Adopt Planf3 as a meta-skill: a planning/control artifact generator that agents 
 ## Current bootstrap artifact
 
 - `specs/pi-agent-house-command-center-plan-artifact-v2.html`
+
+## Local test command
+
+```bash
+cd /root/projects/planf3-pi
+pi --approve --no-extensions --no-skills --skill .pi/skills/planf3
+```
+
+Inside Pi, use `/skill:planf3 ...` to create/update/build/export plan artifacts.
+
+Full test runbook:
+
+```text
+docs/pi-planf3-test-runbook.md
+```

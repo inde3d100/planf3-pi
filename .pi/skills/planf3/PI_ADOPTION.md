@@ -13,3 +13,15 @@ Bootstrap usage for this repo:
 2. Keep upstream `.claude/skills/planf3/` intact for lineage.
 3. Use `.pi/skills/planf3/` as the Pi-facing staged skill copy.
 4. Adapt toward Plan Artifact v2: Markdown canonical, optional HTML export, goal/evidence integration, Agent House/Command Center integration.
+5. Test locally with:
+
+```bash
+cd /root/projects/planf3-pi
+pi --approve --no-extensions --no-skills --skill .pi/skills/planf3
+```
+
+Image generation uses the existing VPS helper:
+
+```bash
+/usr/local/bin/codex-image-generate --aspect landscape --quality high -o specs/<plan-name>/images/hero.png '<prompt>'
+```

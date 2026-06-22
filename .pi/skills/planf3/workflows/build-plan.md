@@ -1,16 +1,50 @@
-# Build Plan
+# Build Plan — Pi Adapter
 
-Task status markers: `[]` idle · `[wip]` in progress · `[x]` complete · `[f]` failed.
+Use this workflow when the user asks to execute, implement, or carry out an existing Planf3 / Plan Artifact v2 plan.
 
-1. Locate the Plan - From the `USER_PROMPT`, resolve the path to the target plan `.html` file; if no path is given, infer the most likely plan from `PLAN_OUTPUT_DIRECTORY` and confirm before building
-2. Absorb Context - Read the full plan: all embedded images, the metadata header, and every back reference (depth 1) so you fully understand prior/related work before writing code
-3. Execute Phases - For each phase in order, top to bottom:
-   - Announce the phase you are starting
-   - Set the phase and current task marker to `[wip]` in the plan file
-   - Implement the task's specific actions
-   - Run that phase's Testing Strategy commands; loop on failure until they pass
-   - Mark each task `[x]` when complete or `[f]` if it cannot be made to pass, then move on
-   - Do not start the next phase until the current phase's tasks and tests resolve
-4. Final Validation - Run the global Validation Commands and confirm every box passes
-5. Update Metadata - Append the current ISO timestamp to `modified`, append agent name / session id, and append the relevant commit SHA(s) to the metadata header
-6. Report - Summarize what was built per phase, the final status of every task, and any `[f]` failures that need attention
+Task status markers: `[]` idle · `[wip]` in progress · `[x]` complete · `[f]` failed/blocked.
+
+## Steps
+
+1. **Locate the canonical plan**
+   - Prefer `specs/<name>.md`.
+   - If the user gives an HTML plan, look for the matching Markdown file first.
+   - If no plan path is given, infer the most likely plan and ask before building.
+
+2. **Absorb context**
+   - Read the full plan.
+   - Read depth-1 backrefs that are necessary for implementation.
+   - Check current git status.
+   - Confirm whether this is low-risk. Ask before high-impact actions: deletion, auth changes, production deploys, spending money, or global installs.
+
+3. **Connect goal state**
+   - If a goal id exists and goal tools are available, call `goal_update` as phases start/finish.
+   - If no goal exists and the build is serious, create one before implementing.
+
+4. **Execute phases top-to-bottom**
+   - Set the active phase/task to `[wip]` in the plan.
+   - Implement only the current task.
+   - Run that phase's validation commands.
+   - If validation passes, mark task `[x]` and record evidence.
+   - If validation cannot pass, mark `[f]`, explain why, and record needed input or blocker.
+   - Do not skip ahead unless the plan explicitly allows it.
+
+5. **Record evidence**
+   - For each validation command, capture command + relevant output.
+   - If goal tools exist, call `goal_evidence` with file paths/commands/output.
+   - Append evidence links to the plan's Evidence map.
+
+6. **Commit when appropriate**
+   - For repo changes, make focused commits after coherent phases.
+   - Append commit SHAs to plan metadata after commit.
+
+7. **Final validation**
+   - Run global validation commands.
+   - Use verification-before-completion discipline: no success claim without output.
+
+8. **Report**
+   - Return changed files, validation output, goal evidence ids, commit SHA(s), and remaining `[f]` items.
+
+## Agent House / Command Center build rule
+
+If the plan includes Agent House or Command Center sections, preserve current manual handoff and board policies unless the plan explicitly says to change them. Plan Artifact v2 should improve coordination before it changes defaults.

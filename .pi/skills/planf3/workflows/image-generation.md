@@ -1,35 +1,89 @@
-# Image Generation
+# Image Generation — Pi Adapter
 
-Fill or update the embedded images in an existing plan `.html` file. Pick the sub-workflow based on the incoming `USER_PROMPT`:
+Use this workflow when the user asks to generate, fill, update, or regenerate images for a plan artifact.
 
-| Sub-workflow | When to call it |
-| --- | --- |
-| Create | The prompt asks to generate, fill, or add the plan's images from scratch (empty `{{...IMAGE` slots) |
-| Update | The prompt asks to change, refine, regenerate, or replace images that already exist in the plan |
+Normal Pi testing uses the installed Codex GPT Image 2 helper, not the upstream OpenAI API scripts.
 
-Scripts (run with `uv run`, needs `OPENAI_API_KEY`):
-- Create image: `uv run scripts/generate_gpt_image.py "<prompt>" <output.png> --size 1536x1024 --quality high`
-- Edit image: `uv run scripts/edit_gpt_image.py "<instruction>" <output.png> <input.png> --size 1536x1024 --quality high`
+## Primary tool
 
-Shared rules for every image prompt:
-- always generate in wide format (`--size 1536x1024`) at high quality (`--quality high`)
-- convey the one or two core ideas of that section for a professional software engineer
-- match the plan's synced visual identity (professional, focused, minimal)
-- keep total words shown in the image under 10
-- save images to `IMAGES_OUTPUT_DIR` (create it if missing)
+```bash
+/usr/local/bin/codex-image-generate --aspect landscape --quality high -o <output.png> '<prompt>'
+```
 
-## Create
+Prompt from file/stdin:
 
-1. Find slots - Grep the plan for `{{...IMAGE` placeholders (hero + per-phase). Each comment names the intended subject.
-2. Write prompts - For each slot, write a prompt following the shared rules above.
-3. Generate - Run `generate_gpt_image.py` once per slot, writing to `IMAGES_OUTPUT_DIR`.
-4. Embed - Replace each `<!-- {{...IMAGE: ...}} -->` placeholder with `<img src="<plan-name>/<file>.png" alt="...">`, keeping the existing `<figure>`/`<figcaption>`.
-5. Report - List the images generated and the slots filled.
+```bash
+/usr/local/bin/codex-image-generate --aspect landscape --quality high -o <output.png> < <prompt-file.md>
+```
 
-## Update
+## Output location
 
-1. Identify targets - From the `USER_PROMPT`, determine which embedded `<img>` images to change.
-2. Write instruction - Write an edit instruction describing the change, following the shared rules above.
-3. Edit - Run `edit_gpt_image.py` with the existing PNG as input, overwriting it (the script backs up the original first).
-4. Verify embed - Confirm the `<img>` still points at the updated file; update `src`/`alt`/`<figcaption>` if the change warrants it.
-5. Report - List the images updated and what changed.
+For plan `specs/example-plan.md`, save images under:
+
+```text
+specs/example-plan/images/
+```
+
+Use descriptive names:
+
+```text
+hero.png
+problem.png
+solution.png
+phase-1.png
+agent-house-flow.png
+command-center-flow.png
+```
+
+## Shared image rules
+
+- Generate only when useful for architecture, UI, workflow, or handoff clarity.
+- Landscape aspect by default.
+- Professional, focused, minimal.
+- Match the plan's visual identity.
+- Keep text shown in the image under 10 words total.
+- Prefer diagrams/conceptual visuals over decorative art.
+- Store the image prompt or short caption in the Markdown plan.
+
+## Create images
+
+1. Read the canonical Markdown plan.
+2. Identify image slots or sections that need visuals.
+3. Create `IMAGES_OUTPUT_DIR`.
+4. Write one focused prompt per image.
+5. Run `codex-image-generate` for each image.
+6. Update the Markdown plan with relative image links:
+
+```markdown
+![Agent House flow](example-plan/images/agent-house-flow.png)
+```
+
+7. If an HTML preview exists, update/re-export it.
+
+## Update images
+
+The helper currently supports generation, not structured image editing. For updates:
+
+1. Write a new prompt that describes the revised image.
+2. Generate a replacement PNG to the same path or a versioned path.
+3. If overwriting, optionally back up the old image as `<name>.bak.png`.
+4. Update Markdown captions/links if needed.
+
+## Fallback
+
+The upstream scripts remain available as reference/fallback:
+
+```bash
+uv run scripts/generate_gpt_image.py '<prompt>' <output.png> --size 1536x1024 --quality high
+uv run scripts/edit_gpt_image.py '<instruction>' <output.png> <input.png> --size 1536x1024 --quality high
+```
+
+They require `OPENAI_API_KEY`. Prefer `codex-image-generate` on this VPS because it uses existing Codex OAuth.
+
+## Failure behavior
+
+If image auth/tooling fails:
+
+- Do not block the entire plan.
+- Mark the image task `[f]` with the reason.
+- Leave the image slot/caption in the plan for later retry.
