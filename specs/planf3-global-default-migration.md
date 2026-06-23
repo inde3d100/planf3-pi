@@ -68,7 +68,7 @@ Make Planf3 default and reversible:
 
 - `/root/.pi/agent/skills/planf3/SKILL.md` — global Planf3 skill.
 - `/root/.pi/agent/extensions/planf3/index.ts` — `/planf3` command bridge.
-- `/root/.pi/agent/skills/_archive/<timestamp>/...` — backups of old planning skills.
+- `/root/.pi/agent/archive/skills/<timestamp>/...` — backups of old planning skills outside active skill discovery.
 - `specs/planf3-global-default-migration.md` — this canonical plan.
 
 ## Agent House integration
@@ -118,7 +118,7 @@ Make Planf3 default and reversible:
 
 ### [x] Phase 3: Replace old planning skills with compatibility wrappers
 
-- [x] Archive old `writing-plans` and `executing-plans` skills under `/root/.pi/agent/skills/_archive/`.
+- [x] Archive old `writing-plans` and `executing-plans` skills under `/root/.pi/agent/archive/skills/` so they do not collide during skill discovery.
 - [x] Replace their `SKILL.md` files with wrappers that say: use Planf3 as canonical, keep old names only for compatibility.
 - [x] Ensure wrappers do not conflict with global `planf3` skill.
 
@@ -216,3 +216,4 @@ Make Planf3 default and reversible:
 
 - 2026-06-23T06:10:59Z — Migration plan created; goal created; Agent House branch created.
 - 2026-06-23T06:20:10Z — Implemented global Planf3 default migration. Evidence: global skill and `/planf3` extension installed; old planning skills archived/wrapped; Agent House default dry-run created `PLAN_ARTIFACT.md` without `--plan`; Command Center dry-run created default `PLAN_ARTIFACT.md` and populated plan metadata/task bodies; Agent House tests passed (`57 passed`); Command Center tests passed (`154 passed`); goal audit passed; Agent House branch commit `61c2e51` created. Global skill/extension and AgentBoot files live outside the Agent House git repo.
+- 2026-06-23T06:25:00Z — Fixed skill-discovery conflict by moving archived `writing-plans` and `executing-plans` originals out of `/root/.pi/agent/skills/_archive/` to `/root/.pi/agent/archive/skills/20260623T061059Z-planf3-migration/`; duplicate scan now reports `duplicates: 0`.
