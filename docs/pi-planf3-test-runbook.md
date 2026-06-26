@@ -1,6 +1,6 @@
 # Pi Planf3 Test Runbook
 
-This runbook tests the project-local Planf3 meta-skill adapter without installing anything globally.
+This runbook tests the consolidated Planf3 meta-skill, which now lives entirely in the global Pi extension folder.
 
 ## Repo
 
@@ -10,33 +10,35 @@ This runbook tests the project-local Planf3 meta-skill adapter without installin
 
 ## What is configured
 
-- Project-local skill: `.pi/skills/planf3/SKILL.md`
-- Skill commands enabled for this repo: `.pi/settings.json`
+- Canonical skill location: `/root/.pi/agent/extensions/planf3/SKILL.md`
+- Workflows: `/root/.pi/agent/extensions/planf3/workflows/`
+- Scripts (reference only): `/root/.pi/agent/extensions/planf3/scripts/`
+- Upstream lineage copy (untouched): `/root/projects/planf3-pi/.claude/skills/planf3/`
 - Canonical plan output: `specs/*.md`
 - Optional preview output: `specs/*.html`
 - Optional images: `specs/<plan-name>/images/*.png`
 - Image helper: `/usr/local/bin/codex-image-generate`
 
-## Launch Pi with the local skill
+## Launch Pi with the consolidated extension
 
 Preferred explicit test command:
 
 ```bash
 cd /root/projects/planf3-pi
-pi --approve --no-extensions --no-skills --skill .pi/skills/planf3
+pi --approve --no-extensions --skill planf3
 ```
 
 Why this command:
 
 - `--approve` trusts project-local files for the run.
 - `--no-extensions` keeps the test focused.
-- `--no-skills --skill .pi/skills/planf3` disables all other skills and loads only this local adapter.
+- `--skill planf3` loads only the consolidated Planf3 skill (resolves to `/root/.pi/agent/extensions/planf3/SKILL.md`).
 
-Alternative, if you want normal project skill discovery:
+Alternative, if you want the global extension enabled (default `/planf3` slash command + `before_agent_start` system-prompt injection):
 
 ```bash
 cd /root/projects/planf3-pi
-pi --approve --no-extensions
+pi --approve
 ```
 
 ## Test 1 — create a canonical Markdown plan
@@ -141,4 +143,4 @@ git status --short
 
 ## Global install rule
 
-Do not copy this skill to `/root/.pi/agent/skills/` until the local tests prove it improves at least one real low-risk Agent House + Command Center workflow.
+The skill now lives only at `/root/.pi/agent/extensions/planf3/` (skill content co-located with the extension's `index.ts`). The previous `/root/.pi/agent/skills/planf3/` global copy and the project-local `.pi/skills/planf3/` staging copy have been retired.

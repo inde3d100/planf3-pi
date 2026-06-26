@@ -8,9 +8,8 @@ Adopt Planf3 as a meta-skill: a planning/control artifact generator that agents 
 
 ## Local policy
 
-- Keep upstream lineage intact.
-- Do not install globally yet.
-- Use project-local staged skill copy at `.pi/skills/planf3/`.
+- Keep upstream lineage intact at `.claude/skills/planf3/`.
+- The Planf3 meta-skill now lives entirely at `/root/.pi/agent/extensions/planf3/` (extension + co-located `SKILL.md` + `workflows/` + `scripts/`).
 - Use `specs/` for bootstrap Planf3-style plan artifacts.
 - Adapt toward Plan Artifact v2 for our Pi lab:
   - Markdown/Obsidian canonical source
@@ -28,10 +27,10 @@ Adopt Planf3 as a meta-skill: a planning/control artifact generator that agents 
 
 ```bash
 cd /root/projects/planf3-pi
-pi --approve --no-extensions --no-skills --skill .pi/skills/planf3
+pi --approve --no-extensions --skill planf3
 ```
 
-Inside Pi, use `/skill:planf3 ...` to create/update/build/export plan artifacts.
+Inside Pi, use `/skill:planf3 ...` (slash command registered by the extension) or `/planf3 ...` to create/update/build/export plan artifacts.
 
 Full test runbook:
 

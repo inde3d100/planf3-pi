@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the project-local Pi Planf3 skill adapter."""
+"""Validate the consolidated Planf3 skill (now lives in the global extension folder)."""
 
 from __future__ import annotations
 
@@ -7,8 +7,9 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / ".pi" / "skills" / "planf3" / "SKILL.md"
+SKILL = Path("/root/.pi/agent/extensions/planf3/SKILL.md")
 SETTINGS = ROOT / ".pi" / "settings.json"
+EXTENSION = Path("/root/.pi/agent/extensions/planf3")
 REQUIRED_WORKFLOWS = [
     "create-plan.md",
     "update-plan.md",
@@ -37,11 +38,11 @@ def main() -> None:
     missing = []
     for path in [SKILL, SETTINGS, ROOT / "docs" / "pi-planf3-test-runbook.md"]:
         if not path.exists():
-            missing.append(str(path.relative_to(ROOT)))
-    workflows_dir = SKILL.parent / "workflows"
+            missing.append(str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path))
+    workflows_dir = EXTENSION / "workflows"
     for name in REQUIRED_WORKFLOWS:
         if not (workflows_dir / name).exists():
-            missing.append(str((workflows_dir / name).relative_to(ROOT)))
+            missing.append(str(workflows_dir / name))
     if missing:
         raise SystemExit("Missing required files:\n" + "\n".join(missing))
 

@@ -11,8 +11,13 @@
 - Command Center job: n/a — parent Pi implementation session
 - Agent House room: n/a — direct implementation; Agent House will be validated by dry-runs/tests
 - Status: [x] default Planf3 migration implemented and committed
+  - [x] consolidation: Planf3 skill content moved into the extension folder; staging copies retired
 - Backrefs:
-  - `/root/projects/planf3-pi/.pi/skills/planf3/SKILL.md` — proven local Planf3 adapter.
+  - `/root/.pi/agent/extensions/planf3/SKILL.md` — canonical Planf3 skill (consolidated, post-migration).
+  - `/root/.pi/agent/extensions/planf3/workflows/` — create/update/build/export-references/image-generation workflows.
+  - `/root/.pi/agent/extensions/planf3/scripts/` — image-generation fallback/reference scripts.
+  - `/root/.pi/agent/extensions/planf3/PI_ADOPTION.md` — post-migration adoption note.
+  - `/root/projects/planf3-pi/.claude/skills/planf3/` — preserved upstream lineage from disler/planf3.
   - `/root/agent-house/command-center/docs/plans/plan-artifacts-v2-integration.md` — current opt-in Plan Artifact v2 integration record.
   - `/usr/local/lib/node_modules/@earendil-works/pi-coding-agent/docs/skills.md` — global skill and `/skill:name` command behavior.
   - `/usr/local/lib/node_modules/@earendil-works/pi-coding-agent/docs/extensions.md` — custom `/planf3` command implementation API.
@@ -21,14 +26,14 @@
   - `/root/agent-house/bin/agent-house` — Agent House CLI and room prompt implementation.
   - `/root/agent-house/command-center/room_dispatcher.py` — Command Center run/task implementation.
 - Forward refs:
-  - `/root/.pi/agent/skills/planf3/SKILL.md` — global Planf3 skill.
-  - `/root/.pi/agent/extensions/planf3/index.ts` — global `/planf3` command.
+  - `/root/.pi/agent/extensions/planf3/index.ts` — global `/planf3` command (reads SKILL.md next to itself).
   - `/root/.pi/agent/AGENTS.md` — global Pi startup guidance.
   - `/root/Obsidian/Brain/AgentBoot.md` — boot memory guidance if approved/needed.
   - `/root/agent-house/tests/test_agent_house_plan_artifacts.py` — Agent House default-plan tests.
   - `/root/agent-house/command-center/tests/test_plan_artifacts.py` — Command Center default-plan tests.
 - Commits:
   - `/root/agent-house` `61c2e51` — `feat: make Planf3 default for agent house`
+  - `/root/projects/planf3-pi` (this commit) — `refactor: consolidate Planf3 skill into extensions/planf3/`
 
 ## Purpose
 
