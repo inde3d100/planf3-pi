@@ -1,10 +1,10 @@
 ---
 name: planf3
-description: Global Planf3 meta-skill for creating, updating, building from, and exporting living implementation plan artifacts. Use as the default planning/control artifact for serious implementation work, Agent House rooms, Command Center jobs, multi-agent handoffs, or when the user asks for planf3, Plan Artifact v2, a spec, or a living plan.
+description: Project-local Planf3 meta-skill for creating, updating, building from, and exporting living implementation plan artifacts. Use for serious planning work, Agent House rooms, Command Center jobs, multi-agent handoffs, or when the user asks for planf3, Plan Artifact v2, a spec, or a living plan/control artifact.
 argument-hint: "[create|update|build|export|images] [user-prompt-or-plan-path] [questionable]"
 ---
 
-# Planf3 for Pi — Global Default Adapter
+# Planf3 for Pi — Project-Local Adapter
 
 ## Purpose
 
@@ -17,7 +17,7 @@ Legacy planning skills such as `writing-plans` and `executing-plans` are compati
 - Canonical plan: `specs/<descriptive-kebab-name>.md`
 - Optional browser preview/export: `specs/<descriptive-kebab-name>.html`
 - Optional images: `specs/<descriptive-kebab-name>/images/*.png`
-- Upstream lineage: keep `/root/projects/planf3-pi/.claude/skills/planf3/` intact; this global copy is the Pi-facing default adapter.
+- Upstream lineage: keep `/root/projects/planf3-pi/.claude/skills/planf3/` intact; this project-local copy is the Pi-facing default adapter for this repo.
 
 ## Core idea
 
