@@ -3,6 +3,8 @@
 > **A [Mythos-class](https://www.anthropic.com/news/claude-fable-5-mythos-5) planning meta-skill: one skill that writes, builds, and maintains every plan your agents run.**
 > Built for the agent trifecta: you, your team, and your AI agents.
 
+> **Pi adapter note (this fork):** the upstream `.claude/skills/planf3/` is preserved as lineage. The active Pi-facing adapter lives at `.pi/skills/planf3/` + `.pi/extensions/planf3/` inside this repo. See [`README-pi.md`](README-pi.md) and [`docs/pi-planf3-test-runbook.md`](docs/pi-planf3-test-runbook.md) for the project-local install, image helper (`/usr/local/bin/codex-image-generate` instead of `OPENAI_API_KEY`), and Pi-specific workflow.
+
 📺 Watch this video to get the full breakdown of this codebase: **[Planf3 on YouTube](https://youtu.be/DzbqeO_diOQ)**
 
 <p align="center">

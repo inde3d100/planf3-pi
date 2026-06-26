@@ -1,5 +1,13 @@
 # Planf3 Global Default Migration
 
+> **Historical artifact.** This plan describes the global-default migration that was implemented and then rolled back. The current state of Planf3 is project-local only:
+>
+> - Skill content: `/root/projects/planf3-pi/.pi/skills/planf3/`
+> - Extension runtime: `/root/projects/planf3-pi/.pi/extensions/planf3/index.ts`
+> - No global copy exists at `/root/.pi/agent/extensions/planf3/` or `/root/.pi/agent/skills/planf3/`.
+>
+> The body below is kept as a historical record of the global-default effort. See the Amendments section at the bottom for the rollback entries and the current project-local state.
+
 ## Metadata
 
 - Created: 2026-06-23T06:10:59Z

@@ -5,11 +5,19 @@
 - Created: 2026-06-22T20:29:22Z
 - Modified:
   - 2026-06-22T20:29:22Z
+  - 2026-06-26T08:00:00Z — Marked implemented. Implementation landed before this amendment; spec body kept as historical contract. See Commits and Evidence sections.
 - Source request: "create a Plan Artifact v2 implementation plan for integrating plan artifacts into Agent House handoffs and Command Center board jobs. Use questionable=true. Save Markdown canonical under specs/ and include optional image slots but do not generate images yet."
 - Goal ID: pending
 - Command Center job: n/a — plan artifact only; no board job started
 - Agent House room: command-center suggested owner; no room started
-- Status: [] draft
+- Status: [x] implemented in `/root/agent-house`
+  - [x] Phase 1: contract defined (test files author the contract)
+  - [x] Phase 2: Agent House plan-aware handoffs (`f156575`)
+  - [x] Phase 3: Command Center schema + bootstrap (`f156575`)
+  - [x] Phase 4: room task routing (`f156575`, `97a3676`)
+  - [x] Phase 5: closeout + final reports (`f156575`)
+  - [x] Phase 6: end-to-end smoke proof (this amendment)
+  - [ ] rollout gate: opt-in only; default-on decision deferred until more live plan-bound runs prove value
 - Questionable: true
 - Backrefs:
   - `/root/projects/planf3-pi/.pi/skills/planf3/SKILL.md` — project-local Planf3 Pi adapter (lives under this repo's `.pi/`).
@@ -23,14 +31,20 @@
   - `/root/agent-house/command-center/room_dispatcher.py` — run bootstrap, routing, task envelope, dashboard, closeout.
   - `/root/agent-house/command-center/result_contract.py` — `ROOM_RESULT.json` contract.
 - Forward refs:
-  - `/root/agent-house/bin/agent-house` — add plan-aware handoff/task prompt sections.
-  - `/root/agent-house/tests/test_agent_house_plan_artifacts.py` — new Agent House tests.
-  - `/root/agent-house/command-center/schema.sql` — add additive plan fields or registry table.
-  - `/root/agent-house/command-center/room_dispatcher.py` — thread plan paths through runs/tasks and room prompts.
-  - `/root/agent-house/command-center/tests/test_plan_artifacts.py` — new Command Center tests.
-  - `/root/agent-house/command-center/runs/<run-id>/PLAN_ARTIFACT.md` — optional per-run copy/symlink target.
+  - `/root/agent-house/bin/agent-house` — `extract_plan_artifact_path`, `task_with_plan_artifact`, `orchestrator_initial_message`, `room_agent_prompt`, `handoff_markdown`, `enter_automated_command_center`, `handoff_current`, `enter_room` all carry or honor the plan path.
+  - `/root/agent-house/tests/test_agent_house_plan_artifacts.py` — Agent House plan tests (8 passing).
+  - `/root/agent-house/command-center/schema.sql` — `runs.plan_artifact_path`, `runs.plan_artifact_snapshot_path`, `runs.plan_artifact_status` columns.
+  - `/root/agent-house/command-center/room_dispatcher.py` — `create_run`, `bootstrap_run`, `run_dispatcher` accept `plan_artifact_path` and thread it through tasks and the room runner.
+  - `/root/agent-house/command-center/report_writer.py` — `write_success_report` includes plan path in `FINAL_RESULT.md` and `ROOM_RESULTS.json`.
+  - `/root/agent-house/command-center/tests/test_plan_artifacts.py` — Command Center plan tests (6 passing).
+  - `/root/agent-house/command-center/runs/<run-id>/PLAN_ARTIFACT.md` — per-run plan snapshot (created on every plan-bound run; default when no plan path is given).
 - Commits:
-  - pending
+  - `/root/agent-house` `f156575` — `feat: add plan artifact support to agent house`
+  - `/root/agent-house` `c6552dc` — `fix: forward plan flag to command center entrypoint`
+  - `/root/agent-house` `272719d` — `fix: carry plan through handoff-current`
+  - `/root/agent-house` `97a3676` — `fix: always honor explicit plan flag`
+  - `/root/agent-house` `61c2e51` — `feat: make Planf3 default for agent house`
+  - `/root/projects/planf3-pi` (this amendment) — `docs: mark Plan Artifact v2 integration spec as implemented`
 
 ## Purpose
 
@@ -344,3 +358,70 @@ Prove the integration reduces drift before making it default.
 ## Amendments
 
 - 2026-06-22T20:29:22Z — Created canonical Markdown Plan Artifact v2 integration plan with questionable=true and image slots only; no images generated.
+- 2026-06-26T08:00:00Z — Marked spec as implemented. Body kept as historical contract. See Commits and Evidence sections for implementation landing points and proof.
+
+## Implementation evidence (post-amendment)
+
+Captured at `2026-06-26T08:00:00Z` from `/root/agent-house` on its current HEAD.
+
+### Schema (additive, nullable columns on `runs`)
+
+```sql
+12:  plan_artifact_path TEXT,
+13:  plan_artifact_snapshot_path TEXT,
+14:  plan_artifact_status TEXT,
+```
+
+Source: `/root/agent-house/command-center/schema.sql` (verified via `grep -n plan_artifact schema.sql`).
+
+### Agent House plan-artifact tests — 8/8 pass
+
+```
+command-center::test_extract_plan_artifact_path_from_task_text PASSED
+command-center::test_task_with_plan_artifact_prefixes_even_if_task_mentions_plan_words PASSED
+command-center::test_orchestrator_initial_message_mentions_active_plan PASSED
+command-center::test_room_prompt_mentions_active_plan PASSED
+command-center::test_handoff_markdown_carries_active_plan_from_source_task PASSED
+command-center::test_command_center_entrypoint_forwards_plan_flag PASSED
+command-center::test_handoff_current_forwards_plan_to_start_handoff PASSED
+command-center::test_enter_room_creates_default_plan_when_no_plan_flag PASSED
+```
+
+Full Agent House suite: `57 passed in 2.05s`.
+
+### Command Center plan-artifact tests — 6/6 pass
+
+```
+command-center/tests/test_plan_artifacts.py::test_create_run_persists_plan_artifact_metadata PASSED
+command-center/tests/test_plan_artifacts.py::test_create_run_creates_default_plan_when_no_plan_path PASSED
+command-center/tests/test_plan_artifacts.py::test_bootstrap_run_threads_plan_path_into_tasks_and_snapshot PASSED
+command-center/tests/test_plan_artifacts.py::test_bootstrap_run_threads_default_plan_path_into_tasks PASSED
+command-center/tests/test_plan_artifacts.py::test_run_dispatcher_passes_plan_path_to_room_runner_and_final_report PASSED
+command-center/tests/test_plan_artifacts.py::test_success_report_includes_plan_artifact_path PASSED
+```
+
+Full Command Center suite: `57 passed in 0.05s`.
+
+### End-to-end dry-run proof
+
+```bash
+python3 bin/agent-house enter intelligence --dry-run --task "Plan-bound smoke run from /root/projects/planf3-pi/specs/agent-house-command-center-plan-artifacts-v2-integration.md"
+```
+
+Rendered prompt output contained the line:
+
+```
+Active plan artifact: `/root/projects/planf3-pi/specs/agent-house-command-center-plan-artifacts-v2-integration.md`
+```
+
+proving the plan path is extracted from the task text and threaded into the orchestrator's initial message without any explicit `--plan` flag.
+
+### Questionables — resolved decisions
+
+- `--plan` flag added AND plan detection in task text — both implemented; tests cover both paths.
+- Result folders copy the canonical plan to `runs/<run-id>/PLAN_ARTIFACT.md` (snapshot) and reference the canonical path; no symlinks.
+- `ROOM_RESULT.json` is unchanged; plan metadata lives in board rows + task bodies + final reports.
+- Command Center does not auto-mutate the plan; only rooms/operators can amend it.
+- Plan-bound runs warn (not fail) if the plan is not amended during the run.
+- Default-on decision deferred until more live plan-bound runs prove value (Phase 6 rollout gate).
+- Image slots remain placeholders; no images generated.
