@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the consolidated Planf3 skill (now lives in the global extension folder)."""
+"""Validate the project-local Planf3 skill + extension (both live under .pi/)."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = Path("/root/.pi/agent/extensions/planf3/SKILL.md")
+SKILL = ROOT / ".pi" / "skills" / "planf3" / "SKILL.md"
+EXTENSION = ROOT / ".pi" / "extensions" / "planf3"
 SETTINGS = ROOT / ".pi" / "settings.json"
-EXTENSION = Path("/root/.pi/agent/extensions/planf3")
 REQUIRED_WORKFLOWS = [
     "create-plan.md",
     "update-plan.md",
@@ -36,13 +36,13 @@ def frontmatter(text: str) -> dict[str, str]:
 
 def main() -> None:
     missing = []
-    for path in [SKILL, SETTINGS, ROOT / "docs" / "pi-planf3-test-runbook.md"]:
+    for path in [SKILL, EXTENSION / "index.ts", SETTINGS, ROOT / "docs" / "pi-planf3-test-runbook.md"]:
         if not path.exists():
             missing.append(str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path))
-    workflows_dir = EXTENSION / "workflows"
+    workflows_dir = SKILL.parent / "workflows"
     for name in REQUIRED_WORKFLOWS:
         if not (workflows_dir / name).exists():
-            missing.append(str(workflows_dir / name))
+            missing.append(str((workflows_dir / name).relative_to(ROOT)))
     if missing:
         raise SystemExit("Missing required files:\n" + "\n".join(missing))
 

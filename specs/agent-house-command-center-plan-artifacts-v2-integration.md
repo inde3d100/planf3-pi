@@ -12,8 +12,9 @@
 - Status: [] draft
 - Questionable: true
 - Backrefs:
-  - `/root/.pi/agent/extensions/planf3/SKILL.md` — consolidated Planf3 Pi adapter (skill content co-located with the extension's `index.ts`).
-  - `/root/.pi/agent/extensions/planf3/workflows/create-plan.md` — create-plan workflow followed.
+  - `/root/projects/planf3-pi/.pi/skills/planf3/SKILL.md` — project-local Planf3 Pi adapter (lives under this repo's `.pi/`).
+  - `/root/projects/planf3-pi/.pi/skills/planf3/workflows/create-plan.md` — create-plan workflow followed.
+  - `/root/projects/planf3-pi/.pi/extensions/planf3/index.ts` — project-local Planf3 extension runtime glue.
   - `/root/agent-house/README.md` — current Agent House room/result/handoff model.
   - `/root/agent-house/COMMANDS.md` — current CLI and manual handoff rules.
   - `/root/agent-house/bin/agent-house` — room prompts, handoff text, CLI startup, result-folder behavior.
@@ -164,7 +165,7 @@ Likely code touchpoints:
 - `/root/agent-house/command-center/result_contract.py` — room result validation.
 - `/root/agent-house/command-center/report_writer.py` — final success/blocked package writing.
 - `/root/agent-house/command-center/tests/` — Command Center regression suite.
-- `/root/.pi/agent/extensions/planf3/SKILL.md` — consolidated Planf3 skill contract.
+- `/root/projects/planf3-pi/.pi/skills/planf3/SKILL.md` — project-local Planf3 skill contract.
 
 ### New
 

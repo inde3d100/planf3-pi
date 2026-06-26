@@ -1,6 +1,6 @@
 # Pi Planf3 Test Runbook
 
-This runbook tests the consolidated Planf3 meta-skill, which now lives entirely in the global Pi extension folder.
+This runbook tests the project-local Planf3 meta-skill and its companion extension. Both live inside the project's `.pi/` folder so Pi auto-discovers them when running in this repo.
 
 ## Repo
 
@@ -10,36 +10,38 @@ This runbook tests the consolidated Planf3 meta-skill, which now lives entirely 
 
 ## What is configured
 
-- Canonical skill location: `/root/.pi/agent/extensions/planf3/SKILL.md`
-- Workflows: `/root/.pi/agent/extensions/planf3/workflows/`
-- Scripts (reference only): `/root/.pi/agent/extensions/planf3/scripts/`
-- Upstream lineage copy (untouched): `/root/projects/planf3-pi/.claude/skills/planf3/`
+- Skill (canonical): `.pi/skills/planf3/SKILL.md`
+- Workflows: `.pi/skills/planf3/workflows/`
+- Scripts (reference only): `.pi/skills/planf3/scripts/`
+- Extension: `.pi/extensions/planf3/index.ts`
+- Upstream lineage copy (untouched): `.claude/skills/planf3/`
+- Skill commands enabled for this repo: `.pi/settings.json` (`enableSkillCommands: true`)
 - Canonical plan output: `specs/*.md`
 - Optional preview output: `specs/*.html`
 - Optional images: `specs/<plan-name>/images/*.png`
 - Image helper: `/usr/local/bin/codex-image-generate`
 
-## Launch Pi with the consolidated extension
+## Launch Pi
 
-Preferred explicit test command:
-
-```bash
-cd /root/projects/planf3-pi
-pi --approve --no-extensions --skill planf3
-```
-
-Why this command:
-
-- `--approve` trusts project-local files for the run.
-- `--no-extensions` keeps the test focused.
-- `--skill planf3` loads only the consolidated Planf3 skill (resolves to `/root/.pi/agent/extensions/planf3/SKILL.md`).
-
-Alternative, if you want the global extension enabled (default `/planf3` slash command + `before_agent_start` system-prompt injection):
+Project-local skill + extension auto-discover when you launch Pi in this repo:
 
 ```bash
 cd /root/projects/planf3-pi
 pi --approve
 ```
+
+If you want to isolate the test to just Planf3 (no other skills, no other extensions):
+
+```bash
+cd /root/projects/planf3-pi
+pi --approve --no-extensions --no-skills --skill .pi/skills/planf3
+```
+
+Why this command:
+
+- `--approve` trusts project-local files for the run.
+- `--no-extensions` skips every extension except the ones you point at.
+- `--no-skills --skill .pi/skills/planf3` disables global skill discovery and loads only this project's skill.
 
 ## Test 1 — create a canonical Markdown plan
 
@@ -47,6 +49,12 @@ Inside Pi, send:
 
 ```text
 /skill:planf3 create a Plan Artifact v2 implementation plan for integrating plan artifacts into Agent House handoffs and Command Center board jobs. Use questionable=true. Save Markdown canonical under specs/ and include optional image slots but do not generate images yet.
+```
+
+Or, with the extension enabled, use the slash command:
+
+```text
+/planf3 create a Plan Artifact v2 implementation plan for integrating plan artifacts into Agent House handoffs and Command Center board jobs. Use questionable=true.
 ```
 
 Expected result:
@@ -139,8 +147,8 @@ python3 scripts/validate-pi-skill.py
 git status --short
 ```
 
-`git status --short` should be clean after committed configuration changes.
+`python3 scripts/validate-pi-skill.py` should print `Pi Planf3 skill adapter validation passed`.
 
-## Global install rule
+## Install scope
 
-The skill now lives only at `/root/.pi/agent/extensions/planf3/` (skill content co-located with the extension's `index.ts`). The previous `/root/.pi/agent/skills/planf3/` global copy and the project-local `.pi/skills/planf3/` staging copy have been retired.
+Planf3 for Pi lives entirely inside this repo's `.pi/` folder. The skill + extension are siblings under `.pi/` (`skills/planf3/` and `extensions/planf3/`) and Pi auto-discovers both when running in this repo. There is no global copy under `/root/.pi/agent/`; the previous consolidation into `~/.pi/agent/extensions/planf3/` was rolled back in favour of this project-local layout.

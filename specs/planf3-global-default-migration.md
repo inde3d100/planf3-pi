@@ -12,28 +12,32 @@
 - Agent House room: n/a — direct implementation; Agent House will be validated by dry-runs/tests
 - Status: [x] default Planf3 migration implemented and committed
   - [x] consolidation: Planf3 skill content moved into the extension folder; staging copies retired
+  - [x] **rollback**: global consolidation reversed; Planf3 is project-local only. Skill + extension live as siblings under `/root/projects/planf3-pi/.pi/`. The `/root/.pi/agent/extensions/planf3/` global copy is removed; the global skill auto-discovery for `planf3` is intentionally not active. Agent House and Command Center consumers should reference the project-local paths directly (or copy/symlink the skill into their own `.pi/` if they want auto-discovery in another repo).
 - Backrefs:
-  - `/root/.pi/agent/extensions/planf3/SKILL.md` — canonical Planf3 skill (consolidated, post-migration).
-  - `/root/.pi/agent/extensions/planf3/workflows/` — create/update/build/export-references/image-generation workflows.
-  - `/root/.pi/agent/extensions/planf3/scripts/` — image-generation fallback/reference scripts.
-  - `/root/.pi/agent/extensions/planf3/PI_ADOPTION.md` — post-migration adoption note.
+  - `/root/projects/planf3-pi/.pi/skills/planf3/SKILL.md` — canonical Planf3 skill (project-local, post-rollback).
+  - `/root/projects/planf3-pi/.pi/skills/planf3/workflows/` — create/update/build/export-references/image-generation workflows.
+  - `/root/projects/planf3-pi/.pi/skills/planf3/scripts/` — image-generation fallback/reference scripts.
+  - `/root/projects/planf3-pi/.pi/skills/planf3/PI_ADOPTION.md` — post-rollback adoption note.
+  - `/root/projects/planf3-pi/.pi/extensions/planf3/index.ts` — project-local extension runtime glue (resolves SKILL.md via relative path).
+  - `/root/projects/planf3-pi/.pi/settings.json` — project-local settings (`enableSkillCommands: true`).
   - `/root/projects/planf3-pi/.claude/skills/planf3/` — preserved upstream lineage from disler/planf3.
   - `/root/agent-house/command-center/docs/plans/plan-artifacts-v2-integration.md` — current opt-in Plan Artifact v2 integration record.
   - `/usr/local/lib/node_modules/@earendil-works/pi-coding-agent/docs/skills.md` — global skill and `/skill:name` command behavior.
   - `/usr/local/lib/node_modules/@earendil-works/pi-coding-agent/docs/extensions.md` — custom `/planf3` command implementation API.
-  - `/root/.pi/agent/skills/writing-plans/SKILL.md` — old planning skill to compatibility-wrap.
-  - `/root/.pi/agent/skills/executing-plans/SKILL.md` — old execution skill to compatibility-wrap.
+  - `/root/.pi/agent/skills/writing-plans/SKILL.md` — old planning skill to compatibility-wrap (still global).
+  - `/root/.pi/agent/skills/executing-plans/SKILL.md` — old execution skill to compatibility-wrap (still global).
   - `/root/agent-house/bin/agent-house` — Agent House CLI and room prompt implementation.
   - `/root/agent-house/command-center/room_dispatcher.py` — Command Center run/task implementation.
 - Forward refs:
-  - `/root/.pi/agent/extensions/planf3/index.ts` — global `/planf3` command (reads SKILL.md next to itself).
-  - `/root/.pi/agent/AGENTS.md` — global Pi startup guidance.
+  - `/root/projects/planf3-pi/.pi/extensions/planf3/index.ts` — project-local `/planf3` command (resolved from this repo).
+  - `/root/.pi/agent/AGENTS.md` — global Pi startup guidance (still references Planf3 as default; do not edit here until the global default binding is reinstated).
   - `/root/Obsidian/Brain/AgentBoot.md` — boot memory guidance if approved/needed.
   - `/root/agent-house/tests/test_agent_house_plan_artifacts.py` — Agent House default-plan tests.
   - `/root/agent-house/command-center/tests/test_plan_artifacts.py` — Command Center default-plan tests.
 - Commits:
   - `/root/agent-house` `61c2e51` — `feat: make Planf3 default for agent house`
-  - `/root/projects/planf3-pi` (this commit) — `refactor: consolidate Planf3 skill into extensions/planf3/`
+  - `/root/projects/planf3-pi` `8e79bad` — `refactor: consolidate Planf3 skill into extensions/planf3/`
+  - `/root/projects/planf3-pi` (this commit) — `refactor: roll Planf3 back to project-local under .pi/`
 
 ## Purpose
 
